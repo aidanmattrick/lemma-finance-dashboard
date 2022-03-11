@@ -9,7 +9,7 @@ import plotly.express as px
 USDL_df = pd.read_parquet('data/results/viz_df_daily_03-10-22.parquet')
 rebalance_df = pd.read_parquet('data/results/viz_rebalance_df_daily_03-11-22.parquet')
 
-
+VIZ_WIDTH = 1000
 
 #***********************
 #TVL VIZ
@@ -24,7 +24,7 @@ TVL_fig = px.line(USDL_df, y='tvl_USD',
 TVL_fig.update_layout(
                   title = '<b>Total Value Locked in Lemma (USD)</b>',
                   title_x = 0.5,
-                  height = 400, width = 1000,
+                  height = 400, width = VIZ_WIDTH,
     
                  )
 #TVL_fig.show()
@@ -73,8 +73,8 @@ USDL_fig['layout']['yaxis2']['title']= 'Number of Events'
 USDL_fig.update_layout(barmode='relative',
                   title = '<b>USDL in Circulation with Corresponding Mints and Redemptions</b>',
                   title_x = 0.5,
-                  height=700, width=1000,
-                  legend_tracegroupgap = 390,
+                  height=700, width=VIZ_WIDTH,
+                  legend_tracegroupgap = 325,
                  )
 #USDL_fig.show()
 
@@ -103,7 +103,7 @@ rebalance_fig['layout']['yaxis']['title']= 'Amount rebalanced (USD)'
 rebalance_fig.update_layout(barmode='relative',
                   title = '<b>Rebalance Events</b>',
                   title_x = 0.5,
-                  height=400, width=1000,
+                  height=400, width=VIZ_WIDTH,
                  )
 #rebalance_fig.show()
 
@@ -120,12 +120,13 @@ rebalance_fig.update_layout(barmode='relative',
 #         """, unsafe_allow_html=True)
 
 ###PLOTS
+st.set_page_config(layout = "wide")
+
 
 st.markdown("<h1 style='text-align: center; color: black;'>Lemma Finance</h1>", unsafe_allow_html=True)
 
 
-with st.container():
-    st.plotly_chart(TVL_fig, use_container_width=True)
+st.plotly_chart(TVL_fig, use_container_width=True)
 
 st.plotly_chart(USDL_fig, use_container_width=True)
 
