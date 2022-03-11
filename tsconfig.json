@@ -1,0 +1,28 @@
+{
+  "include": [
+    "./src/**/*.ts",
+    "./examples/**/*.ts",
+    "./tests/**/*.ts"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "es2020"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "target": "es2017",
+    "baseUrl": ".",
+    "outDir": "dist",
+    "declaration": true,
+    "declarationDir": "dist",
+    "strict": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowUnreachableCode": false,
+    "alwaysStrict": true,
+    "resolveJsonModule": true,
+    "noImplicitAny": false
+  }
+}
