@@ -54,7 +54,8 @@ USDL_fig.add_trace(
 #Mint Events
 USDL_fig.add_trace(
     go.Bar(x=USDL_df.index, y=USDL_df.mint_events, name="Mints", legendgroup = '2', marker_color='#00cc96'),
-    row = 2, col = 1
+    row = 2, col = 1,
+    
 )
 
 #Redemption Events
