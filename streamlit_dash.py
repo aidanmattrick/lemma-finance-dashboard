@@ -134,7 +134,6 @@ st.plotly_chart(USDL_fig, use_container_width=True)
 st.plotly_chart(rebalance_fig, use_container_width=True)
 
 
-
 # title_alignment =
 # """
 # <style>
