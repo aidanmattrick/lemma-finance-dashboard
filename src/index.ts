@@ -4,6 +4,7 @@ import { USDLemma } from "./contracts/USDLemma";
 import { stringify } from "querystring";
 // import { XUSDLemma } from './contracts/xUSDLemma';  REVISIT once source code verified
 
+
 const addresses = {
   USD_LEMMA: '0xdb41ab644AbcA7f5ac579A5Cf2F41e606C2d6abc', //Proxy address but using Implementation ABI 0xb8f9632e8d3cfaf84c254d98aea182a33a9d11bb
   XUSD_Lemma: '0x57c7e0d43c05bce429ce030132ca40f6fa5839d7',
@@ -25,7 +26,7 @@ let schema = new parquet.ParquetSchema({
 });
 
 //main function
-const writeToParquet = async (fileName: string) => {
+export const writeToParquet = async (fileName: string) => {
   const latestBlock = await web3.eth.getBlockNumber()
   console.log(latestBlock);
   var writer = await parquet.ParquetWriter.openFile(schema, fileName); //removed await
