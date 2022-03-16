@@ -25,7 +25,6 @@
     "cz": "cz",
     "semantic-release": "semantic-release",
     "docs": "md-magic --path './README.md'",
-    "prepare": "husky install",
     "start": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' ts-node -r esm ./src/index.ts"
   },
   "devDependencies": {
