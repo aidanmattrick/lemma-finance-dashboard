@@ -79,6 +79,7 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
 export function writeRawData() {
   const storage = new Storage();
   const bucket = storage.bucket('lemma_dash_test');
+  console.log('Current directory: ' + process.cwd());
   bucket.upload('../data/results/viz_df_daily_03-10-22.parquet', function(err, file) {
   });
   console.log("Uploaded file to bucket!")
