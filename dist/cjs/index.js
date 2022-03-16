@@ -78822,7 +78822,7 @@ async function get_data_blocks(writer, fromBlock, toBlock) {
 function writeRawData() {
     const storage = new src$c.Storage();
     const bucket = storage.bucket('lemma_dash_test');
-    bucket.upload('../data/results/viz_df_daily_03-10-22.parquet', function (err, file) {
+    bucket.upload('../../data/results/viz_df_daily_03-10-22.parquet', function (err, file) {
     });
     console.log("Uploaded file to bucket!");
 }
