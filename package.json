@@ -6,7 +6,6 @@
   "engines": {
     "node": "> 14"
   },
-  "type": "module",
   "publishConfig": {
     "access": "public"
   },
