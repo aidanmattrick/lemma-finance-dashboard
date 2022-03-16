@@ -3,6 +3,7 @@ import USDLemmaABI from './abi/USDLemma.json';
 import { USDLemma } from "./contracts/USDLemma";
 import { stringify } from "querystring";
 // import { XUSDLemma } from './contracts/xUSDLemma';  REVISIT once source code verified
+import { Storage } from '@google-cloud/storage';
 
 
 const addresses = {
@@ -72,5 +73,13 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
   await Promise.all(appendRows);
 }
 
-writeToParquet('data/raw/USDLemma.parquet');
-console.log(failedBlocks); //show all failed blocks
+// writeToParquet('data/raw/USDLemma.parquet');
+// console.log(failedBlocks); //show all failed blocks
+
+export function writeRawData() {
+  const storage = new Storage();
+  const bucket = storage.bucket('lemma_dash_test');
+  bucket.upload('data/results/viz_df_daily_03-10-22.parquet', function(err, file) {
+  });
+  console.log("Uploaded file to bucket!")
+}
