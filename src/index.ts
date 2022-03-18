@@ -80,7 +80,10 @@ export function writeRawData() {
   const storage = new Storage();
   const bucket = storage.bucket('lemma_dash_test');
   console.log('Current directory: ' + process.cwd());
-  bucket.upload('../data/results/viz_df_daily_03-10-22.parquet', function(err, file) {
+  writeToParquet('USDLemma_test_03-16-22.parquet')
+  // bucket.upload('../data/results/viz_df_daily_03-10-22.parquet', function(err, file) {
+  // });
+  bucket.upload('USDLemma_test_03-16-22.parquet', function(err, file) {
   });
   console.log("Uploaded file to bucket!")
 }
