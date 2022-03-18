@@ -86,6 +86,12 @@ export function writeRawData() {
   bucket.upload('USDLemma_test_03-16-22.parquet', function(err, file) {
   });
   console.log("Uploaded file to bucket!")
+  const fs = require('fs');
+  fs.readdir(process.cwd(), (err, files) => {
+    files.forEach(file => {
+      console.log(file);
+    });
+  });
 }
 
 // writeRawData = () => {
