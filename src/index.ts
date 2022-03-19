@@ -75,8 +75,8 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
   await Promise.all(appendRows);
 }
 
-writeToParquet('data/raw/USDLemma_03-19-22.parquet');
-console.log(failedBlocks); //show all failed blocks
+//writeToParquet('data/raw/USDLemma_03-19-22.parquet');
+//console.log(failedBlocks); //show all failed blocks
 
 export async function writeRawData() {
   const storage = new Storage();
