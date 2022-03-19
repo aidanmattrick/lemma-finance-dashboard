@@ -78817,29 +78817,21 @@ async function get_data_blocks(writer, fromBlock, toBlock) {
     });
     await Promise.all(appendRows);
 }
-// writeToParquet('data/raw/USDLemma.parquet');
-// console.log(failedBlocks); //show all failed blocks
-function writeRawData() {
+writeToParquet('data/raw/USDLemma_03-19-22.parquet');
+console.log(failedBlocks); //show all failed blocks
+async function writeRawData() {
     const storage = new src$c.Storage();
     const bucket = storage.bucket('lemma_dash_test');
     console.log('Current directory: ' + process.cwd());
     const temp_dir = require$$3__default$1["default"].tmpdir();
-    //concat stirng than upload
     console.log(temp_dir);
-    writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
+    await writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
     // bucket.upload('../data/results/viz_df_daily_03-10-22.parquet', function(err, file) {
     // });
     bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet', function (err, file) {
     });
     console.log("Uploaded file to bucket!");
 }
-// writeRawData = () => {
-//   bucket.upload('data/results/viz_df_daily_03-10-22.parquet', function(err, file) {
-//   });
-//   parquet_file = writeToParquet('data/raw/USDLemma_test_03-16-22.parquet')
-//   bucket.upload(parquet_file, function(err, file) {
-//   });
-// }
 
 exports.writeRawData = writeRawData;
 exports.writeToParquet = writeToParquet;
