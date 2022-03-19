@@ -33,7 +33,8 @@ export const writeToParquet = async (fileName: string) => {
   const latestBlock = await web3.eth.getBlockNumber()
   console.log(latestBlock);
   var writer = await parquet.ParquetWriter.openFile(schema, fileName); //removed await
-  await pull_data(writer, 0, latestBlock);
+  //await pull_data(writer, 0, latestBlock); 8171109
+  await pull_data(writer, 8054330, latestBlock)
   await writer.close();
 }
 
