@@ -78825,11 +78825,16 @@ async function writeRawData() {
     console.log('Current directory: ' + process.cwd());
     const temp_dir = require$$3__default$1["default"].tmpdir();
     console.log(temp_dir);
-    await writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
+    try {
+        await writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
+        bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet', function (err, file) {
+        });
+    }
+    catch (err) {
+        console.error(err);
+    }
     // bucket.upload('../data/results/viz_df_daily_03-10-22.parquet', function(err, file) {
     // });
-    bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet', function (err, file) {
-    });
     console.log("Uploaded file to bucket!");
 }
 
