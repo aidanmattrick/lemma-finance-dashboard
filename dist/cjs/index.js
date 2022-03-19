@@ -78765,7 +78765,6 @@ const addresses = {
 const parquet = require('parquetjs');
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.HttpProvider('https://arb-mainnet.g.alchemy.com/v2/S6gNm0Rzgv7UBu3ztTC1iDbNX0vhoT9m'));
-let failedBlocks = [];
 // Parquet table
 let schema = new parquet.ParquetSchema({
     event: { type: 'UTF8' },
@@ -78794,7 +78793,8 @@ async function pull_data(writer, startBlock = 0, latestBlock) {
             await get_data_blocks(writer, fromBlock, toBlock);
         }
         catch (err) {
-            failedBlocks.push(fromBlock.toString() + "," + toBlock.toString());
+            //failedBlocks.push(fromBlock.toString()+","+toBlock.toString())
+            console.error(err);
         }
     }
 }
@@ -78806,19 +78806,23 @@ async function get_data_blocks(writer, fromBlock, toBlock) {
         fromBlock: fromBlock,
         toBlock: toBlock //refactor to make sure not pulling extra blocks//currently deduping w/ Pandas
     });
-    const appendRows = lemmaEvents.map(evt => {
-        return writer.appendRow({
-            event: evt.event,
-            contract_address: evt.address,
-            block_number: evt.blockNumber.toString(),
-            tx_hash: evt.transactionHash,
-            return_values: require$$0$8.stringify(evt.returnValues),
-        });
-    });
-    await Promise.all(appendRows);
+    try {
+        await Promise.all(lemmaEvents.map(evt => {
+            return writer.appendRow({
+                event: evt.event,
+                contract_address: evt.address,
+                block_number: evt.blockNumber.toString(),
+                tx_hash: evt.transactionHash,
+                return_values: require$$0$8.stringify(evt.returnValues),
+            });
+        }));
+    }
+    catch (err) {
+        console.error(err);
+    }
 }
-writeToParquet('data/raw/USDLemma_03-19-22.parquet');
-console.log(failedBlocks); //show all failed blocks
+//writeToParquet('data/raw/USDLemma_03-19-22.parquet');
+//console.log(failedBlocks); //show all failed blocks
 async function writeRawData() {
     const storage = new src$c.Storage();
     const bucket = storage.bucket('lemma_dash_test');

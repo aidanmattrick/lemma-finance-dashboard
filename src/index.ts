@@ -49,7 +49,8 @@ async function pull_data(writer, startBlock = 0, latestBlock): Promise<void> {
       await get_data_blocks(writer, fromBlock, toBlock);
     }
     catch(err){
-     failedBlocks.push(fromBlock.toString()+","+toBlock.toString())
+     //failedBlocks.push(fromBlock.toString()+","+toBlock.toString())
+     console.error(err)
     }
   }
 }
@@ -63,16 +64,21 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
       toBlock: toBlock //refactor to make sure not pulling extra blocks//currently deduping w/ Pandas
   })
 
-  const appendRows = lemmaEvents.map(evt => { //collecting series of promises as an array...
-    return writer.appendRow({
-      event: evt.event, //if 'all'
-      contract_address: evt.address,
-      block_number: evt.blockNumber.toString(),
-      tx_hash: evt.transactionHash,
-      return_values: stringify(evt.returnValues),
-      });
-  });
-  await Promise.all(appendRows);
+  try {
+    await Promise.all(
+      lemmaEvents.map(evt => { //collecting series of promises as an array...
+      return writer.appendRow({
+        event: evt.event, //if 'all'
+        contract_address: evt.address,
+        block_number: evt.blockNumber.toString(),
+        tx_hash: evt.transactionHash,
+        return_values: stringify(evt.returnValues),
+        });
+      }));
+    }
+  catch(err){
+    console.error(err)
+  }
 }
 
 //writeToParquet('data/raw/USDLemma_03-19-22.parquet');
