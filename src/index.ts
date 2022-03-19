@@ -48,6 +48,7 @@ async function pull_data(writer, startBlock = 0, latestBlock): Promise<void> {
     }
     try {
       await get_data_blocks(writer, fromBlock, toBlock);
+      console.log('block series crawled...')
     }
     catch(err){
      //failedBlocks.push(fromBlock.toString()+","+toBlock.toString())
@@ -93,7 +94,9 @@ export async function writeRawData() {
   console.log(temp_dir);
   try {
     await writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
+    console.log('wrote to Parquet in try.')
     bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet', function(err, file) {
+    console.log('Made it through try statement to upload to bucket.')
     });
   }
   catch(err) {
