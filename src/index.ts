@@ -104,5 +104,8 @@ export async function writeRawData() {
   }
   // bucket.upload('../data/results/viz_df_daily_03-10-22.parquet', function(err, file) {
   // });
+  setTimeout(() => {
+    console.log('timeout');
+  }, 40000);
   console.log("Uploaded file to bucket!")
 }
