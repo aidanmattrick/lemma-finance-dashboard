@@ -137,13 +137,16 @@ exports.writeRawData = async () => {
   let awaiter = new Promise<void>((resolve) => {
   try {
     //await writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
-    //writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
-    writeToParquet('data/raw/USDLemma_test_03-16-22.parquet');
+    writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
+
+    //LOCAL
+    //writeToParquet('data/raw/USDLemma_test_03-16-22.parquet');
+
     console.log('wrote to Parquet in try.')
-    //bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet', function(err, file) {
+    bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet', function(err, file) {
     console.log('Made it through try statement to upload to bucket.')
     resolve();
-    //});
+    });
   }
   catch(err) {
     console.error(err)
