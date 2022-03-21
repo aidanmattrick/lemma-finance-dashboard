@@ -78832,9 +78832,8 @@ async function writeRawData() {
     try {
         await writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
         console.log('wrote to Parquet in try.');
-        bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet', function (err, file) {
-            console.log('Made it through try statement to upload to bucket.');
-        });
+        await bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet');
+        console.log('Made it through try statement to upload to bucket.');
     }
     catch (err) {
         console.error(err);
