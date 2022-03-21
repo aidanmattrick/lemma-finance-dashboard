@@ -78477,27 +78477,26 @@ let schema = new parquet.ParquetSchema({
     return_values: { type: 'UTF8' },
 });
 //main function
-const writeToParquet = async (fileName) => {
+const writeToParquet = async (fileName, startBlock) => {
     const latestBlock = await web3.eth.getBlockNumber();
     console.log(latestBlock);
     var writer = await parquet.ParquetWriter.openFile(schema, fileName); //removed await
-    await pull_data(writer, 8000000, latestBlock);
+    await pull_data(writer, startBlock, latestBlock);
     await writer.close();
 };
 //main data function
 async function pull_data(writer, startBlock = 0, latestBlock) {
-    for (let i = startBlock; i <= latestBlock; i += 2000) { //used to be 2000
+    for (let i = startBlock; i <= latestBlock; i += 2000) {
         let fromBlock = i;
         let toBlock = i + 1999;
         if (fromBlock % 100000 === 0) {
-            console.log("Progress is " + ((fromBlock / latestBlock) * 100).toFixed(2).toString() + "% complete.");
+            console.log("Progress is " + ((startBlock / latestBlock) * 100).toFixed(2).toString() + "% complete.");
         }
         try {
             await get_data_blocks(writer, fromBlock, toBlock);
-            console.log('Block series crawled...');
         }
         catch (err) {
-            //failedBlocks.push(fromBlock.toString()+","+toBlock.toString())
+            failedBlocks.push(fromBlock.toString() + "," + toBlock.toString());
             console.error(err);
         }
     }
@@ -78532,16 +78531,23 @@ async function writeRawData() {
     console.log('Current directory: ' + process.cwd());
     const temp_dir = require$$3__default$1["default"].tmpdir();
     console.log(temp_dir);
-    await remoteFile.download(async function (err, contents) {
+    // await remoteFile.download(async function(err, contents) {
+    //   console.log("file err: " + err);
+    //   console.log("file data: " + contents);
+    //   var startBlock = parseInt(contents.toString())
+    //   console.log(startBlock)
+    // });
+    let startBlock = await remoteFile.download(async function (err, contents) {
         console.log("file err: " + err);
         console.log("file data: " + contents);
-        var start_block = contents;
-        console.log(start_block);
+        let startBlock = parseInt(contents.toString());
+        return startBlock;
     });
     try {
-        await writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
+        console.log(startBlock);
+        await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', startBlock);
         console.log('wrote to Parquet in try.');
-        await bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet');
+        await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
         console.log('Made it through try statement to upload to bucket.');
     }
     catch (err) {
