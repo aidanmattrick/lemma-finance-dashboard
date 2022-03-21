@@ -104,23 +104,25 @@ export async function writeRawData() {
   });
 
   try {
-    console.log(startBlock)
+    console.log('Crawling starting at block ' + startBlock + '...')
     await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', startBlock);
-    console.log('wrote to Parquet in try.');
     await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
-    console.log('Made it through try statement to upload to bucket.');
+    console.log('Uploaded raw data to bucket.');
   }
   catch(err) {
     console.error(err)
   }
-  console.log("Uploaded file to bucket!")
 
-  //write last block crawled to txt file
+  //Write last block crawled to txt file in tmp dir
   let latestBlock = await web3.eth.getBlockNumber();
-  await fsLibrary.writeFile('last_block.txt', latestBlock, (err) => {
+  await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
       if (err) throw console.error(err);
   });
   console.log('Wrote last block crawled (' + latestBlock.toString() + ') to last_block.txt')
+
+  //Upload to bucket
+  await bucket.upload(temp_dir + '/last_block.txt');
+  console.log('Uploaded last_block.txt to bucket.')
 }
 
 
