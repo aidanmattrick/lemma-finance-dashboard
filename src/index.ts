@@ -31,8 +31,7 @@ export const writeToParquet = async (fileName: string) => {
   const latestBlock = await web3.eth.getBlockNumber()
   console.log(latestBlock);
   var writer = await parquet.ParquetWriter.openFile(schema, fileName); //removed await
-  //await pull_data(writer, 0, latestBlock); 8171109
-  await pull_data(writer, 0, latestBlock)
+  await pull_data(writer, 8000000, latestBlock)
   await writer.close();
 }
 
@@ -84,9 +83,17 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
 export async function writeRawData() {
   const storage = new Storage();
   const bucket = storage.bucket('lemma_dash_test');
+  const remoteFile = bucket.file('last_block.txt');
   console.log('Current directory: ' + process.cwd());
   const temp_dir = os.tmpdir();
   console.log(temp_dir);
+
+  await remoteFile.download(async function(err, contents) {
+    console.log("file err: " + err);
+    console.log("file data: " + contents);
+    var start_block = contents
+    console.log(start_block)
+  });
   try {
     await writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
     console.log('wrote to Parquet in try.');
