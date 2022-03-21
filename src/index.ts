@@ -152,6 +152,6 @@ export async function writeRawData() {
 //WHEN RUNNING ON LOCAL UNCOMMENT:
 
 //writeToParquet('data/raw/USDLemma_03-19-22.parquet');
-//console.log(failedBlocks); //show all failed blocks
+console.log(failedBlocks); //show all failed blocks
 
-//writeRawData();
+writeRawData();
