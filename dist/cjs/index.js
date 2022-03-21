@@ -78482,7 +78482,7 @@ const writeToParquet = async (fileName) => {
     console.log(latestBlock);
     var writer = await parquet.ParquetWriter.openFile(schema, fileName); //removed await
     //await pull_data(writer, 0, latestBlock); 8171109
-    await pull_data(writer, 8054330, 8054335);
+    await pull_data(writer, 0, latestBlock);
     await writer.close();
 };
 //main data function
