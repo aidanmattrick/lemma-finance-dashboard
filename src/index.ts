@@ -5,6 +5,7 @@ import { stringify } from "querystring";
 // import { XUSDLemma } from './contracts/xUSDLemma';  REVISIT once source code verified
 import { Storage } from '@google-cloud/storage';
 import os from 'os';
+const fsLibrary  = require('fs');
 
 const addresses = {
   USD_LEMMA: '0xdb41ab644AbcA7f5ac579A5Cf2F41e606C2d6abc', //Proxy address but using Implementation ABI 0xb8f9632e8d3cfaf84c254d98aea182a33a9d11bb
@@ -31,7 +32,8 @@ export const writeToParquet = async (fileName: string, startBlock: any) => {
   const latestBlock = await web3.eth.getBlockNumber()
   console.log(latestBlock);
   var writer = await parquet.ParquetWriter.openFile(schema, fileName); //removed await
-  await pull_data(writer, startBlock, latestBlock)
+  //await pull_data(writer, startBlock, latestBlock)
+  await pull_data(writer, startBlock, 8054335)
   await writer.close();
 }
 
@@ -112,6 +114,13 @@ export async function writeRawData() {
     console.error(err)
   }
   console.log("Uploaded file to bucket!")
+
+  //write last block crawled to txt file
+  let latestBlock = await web3.eth.getBlockNumber();
+  await fsLibrary.writeFile('last_block.txt', latestBlock, (err) => {
+      if (err) throw console.error(err);
+  });
+  console.log('Wrote last block crawled (' + latestBlock.toString() + ') to last_block.txt')
 }
 
 

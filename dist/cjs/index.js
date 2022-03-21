@@ -78460,6 +78460,7 @@ Object.defineProperty(exports, "Storage", { enumerable: true, get: function () {
 
 }(src$c));
 
+const fsLibrary = require('fs');
 const addresses = {
     USD_LEMMA: '0xdb41ab644AbcA7f5ac579A5Cf2F41e606C2d6abc',
     XUSD_Lemma: '0x57c7e0d43c05bce429ce030132ca40f6fa5839d7',
@@ -78481,7 +78482,8 @@ const writeToParquet = async (fileName, startBlock) => {
     const latestBlock = await web3.eth.getBlockNumber();
     console.log(latestBlock);
     var writer = await parquet.ParquetWriter.openFile(schema, fileName); //removed await
-    await pull_data(writer, startBlock, latestBlock);
+    //await pull_data(writer, startBlock, latestBlock)
+    await pull_data(writer, startBlock, 8054335);
     await writer.close();
 };
 //main data function
@@ -78554,6 +78556,13 @@ async function writeRawData() {
         console.error(err);
     }
     console.log("Uploaded file to bucket!");
+    //write last block crawled to txt file
+    let latestBlock = await web3.eth.getBlockNumber();
+    await fsLibrary.writeFile('last_block.txt', latestBlock, (err) => {
+        if (err)
+            throw console.error(err);
+    });
+    console.log('Wrote last block crawled (' + latestBlock.toString() + ') to last_block.txt');
 }
 //Below is code for diff async approach based on Stack Overflow post
 //Trying to get working with await awaiter approach...
