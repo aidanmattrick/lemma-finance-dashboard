@@ -78460,9 +78460,7 @@ Object.defineProperty(exports, "Storage", { enumerable: true, get: function () {
 
 }(src$c));
 
-//import { kMaxLength } from 'buffer';
-//import { resolve } from '@rollup/plugin-node-resolve';
-require('fs');
+const fsLibrary = require('fs');
 const addresses = {
     USD_LEMMA: '0xdb41ab644AbcA7f5ac579A5Cf2F41e606C2d6abc',
     XUSD_Lemma: '0x57c7e0d43c05bce429ce030132ca40f6fa5839d7',
@@ -78535,62 +78533,39 @@ async function writeRawData() {
     console.log('Current directory: ' + process.cwd());
     const temp_dir = require$$3__default$1["default"].tmpdir();
     console.log(temp_dir);
-    // await remoteFile.download(async function(err, contents) {
-    //   console.log("file err: " + err);
-    //   console.log("file data: " + contents);
-    //   var startBlock = parseInt(contents.toString())
-    //   return startBlock;
-    // });
-    // async function getStartBlock() {
-    //   const contents = await remoteFile.download();//.catch(error => console.error(error));
-    //   return contents.toString();
-    // };
-    // let startBlock = getStartBlock()//.catch(console.error);
-    // async function downloadFile() {
-    //   // Downloads the file
-    //   let downloaded_file = await remoteFile.download();
-    //   downloaded_file.then((resolve))
-    // }
-    // downloadFile().catch(console.error);
-    const downloadAFile = async () => {
+    const downloadFile = async () => {
         const file = await remoteFile.download();
         return file.toString();
     };
-    let result = await downloadAFile();
-    console.log('Attempt');
-    console.log(result);
-    //One that was closest
-    // let startBlock = await remoteFile.download(async function(err, contents) {
-    //   console.log("file err: " + err);
-    //   console.log("file data: " + contents);
-    //   var startBlock = parseInt(contents.toString());
-    //   return startBlock;
-    // });
-    // console.log(startBlock.then((res) =>console.log(res)));
-    // console.log('toString:');
-    // console.log(startBlock.toString())
-    // try {
-    //   console.log('Crawling starting at block ' + startBlock + '...')
-    //   await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', startBlock);
-    //   await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
-    //   console.log('Uploaded raw data to bucket.');
-    // }
-    // catch(err) {
-    //   console.error(err)
-    // }
+    // let result = await downloadAFile();
+    // console.log('Attempt')
+    // console.log(result)
+    let startBlock = await downloadFile();
+    try {
+        console.log('Crawling starting at block ' + startBlock + '...');
+        //PARSING STARTBLOCK AS INT HERE...
+        await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', parseInt(startBlock));
+        await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
+        console.log('Uploaded raw data to bucket.');
+    }
+    catch (err) {
+        console.error(err);
+    }
     //Write last block crawled to txt file in tmp dir
-    // let latestBlock = await web3.eth.getBlockNumber().toString();
-    // await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
-    //     if (err) throw console.error(err);
-    // });
-    // console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt')
-    // //Upload to bucket
-    // await bucket.upload(temp_dir + '/last_block.txt');
-    // console.log('Uploaded last_block.txt to bucket.')
-    // if (failedBlocks.length > 0){
-    //   console.log('FOLLOWING BLOCKS FAILED:')
-    //   console.log(failedBlocks);
-    // }
+    let latestBlock = await web3.eth.getBlockNumber().toString();
+    await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
+        if (err)
+            throw console.error(err);
+    });
+    console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
+    //Upload to bucket
+    await bucket.upload(temp_dir + '/last_block.txt');
+    console.log('Uploaded last_block.txt to bucket.');
+    //Log out failed blocks
+    if (failedBlocks.length > 0) {
+        console.log('FOLLOWING BLOCKS FAILED:');
+        console.log(failedBlocks);
+    }
 }
 
 exports.writeRawData = writeRawData;

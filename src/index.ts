@@ -1,12 +1,10 @@
 import USDLemmaABI from './abi/USDLemma.json';
 //import xUSDLemmaABI from './abi/xUSDLemma.json'; REVISIT once source code verified
+// import { XUSDLemma } from './contracts/xUSDLemma';  REVISIT once source code verified
 import { USDLemma } from "./contracts/USDLemma";
 import { stringify } from "querystring";
-// import { XUSDLemma } from './contracts/xUSDLemma';  REVISIT once source code verified
 import { Storage } from '@google-cloud/storage';
 import os from 'os';
-//import { kMaxLength } from 'buffer';
-//import { resolve } from '@rollup/plugin-node-resolve';
 const fsLibrary  = require('fs');
 
 const addresses = {
@@ -31,11 +29,11 @@ let schema = new parquet.ParquetSchema({
 
 //main function
 export const writeToParquet = async (fileName: string, startBlock: any) => {
-  const latestBlock = await web3.eth.getBlockNumber()
+  const latestBlock = await web3.eth.getBlockNumber();
   console.log(latestBlock);
   var writer = await parquet.ParquetWriter.openFile(schema, fileName); //removed await
   //await pull_data(writer, startBlock, latestBlock)
-  await pull_data(writer, startBlock, 8054335)
+  await pull_data(writer, startBlock, 8054335);
   await writer.close();
 }
 
@@ -45,14 +43,14 @@ async function pull_data(writer, startBlock = 0, latestBlock): Promise<void> {
     let fromBlock = i
     let toBlock = i + 1999
     if (fromBlock % 100000 === 0) {
-      console.log("Progress is " + ((startBlock / latestBlock) * 100).toFixed(2).toString() + "% complete.")
+      console.log("Progress is " + ((startBlock / latestBlock) * 100).toFixed(2).toString() + "% complete.");
     }
     try {
       await get_data_blocks(writer, fromBlock, toBlock);
     }
     catch(err){
-     failedBlocks.push(fromBlock.toString()+","+toBlock.toString())
-     console.error(err)
+     failedBlocks.push(fromBlock.toString()+","+toBlock.toString());
+     console.error(err);
     }
   }
 }
@@ -79,7 +77,7 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
       }));
     }
   catch(err){
-    console.error(err)
+    console.error(err);
   }
 }
 
@@ -91,73 +89,43 @@ export async function writeRawData() {
   const temp_dir = os.tmpdir();
   console.log(temp_dir);
 
-  // await remoteFile.download(async function(err, contents) {
-  //   console.log("file err: " + err);
-  //   console.log("file data: " + contents);
-  //   var startBlock = parseInt(contents.toString())
-  //   return startBlock;
-  // });
-
-  // async function getStartBlock() {
-  //   const contents = await remoteFile.download();//.catch(error => console.error(error));
-  //   return contents.toString();
-  // };
-
-  // let startBlock = getStartBlock()//.catch(console.error);
-
-  // async function downloadFile() {
-  //   // Downloads the file
-  //   let downloaded_file = await remoteFile.download();
-  //   downloaded_file.then((resolve))
-  // }
-
-  // downloadFile().catch(console.error);
-
-  const downloadAFile = async () => {
+  const downloadFile = async () => {
     const file = await remoteFile.download();
     return file.toString();
   }
 
-  let result = await downloadAFile();
-  console.log('Attempt')
-  console.log(result)
+  // let result = await downloadAFile();
+  // console.log('Attempt')
+  // console.log(result)
 
+  let startBlock = await downloadFile();
 
-  //One that was closest
-  // let startBlock = await remoteFile.download(async function(err, contents) {
-  //   console.log("file err: " + err);
-  //   console.log("file data: " + contents);
-  //   var startBlock = parseInt(contents.toString());
-  //   return startBlock;
-  // });
-
-  // console.log(startBlock.then((res) =>console.log(res)));
-  // console.log('toString:');
-  // console.log(startBlock.toString())
-
-  // try {
-  //   console.log('Crawling starting at block ' + startBlock + '...')
-  //   await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', startBlock);
-  //   await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
-  //   console.log('Uploaded raw data to bucket.');
-  // }
-  // catch(err) {
-  //   console.error(err)
-  // }
+  try {
+    console.log('Crawling starting at block ' + startBlock + '...');
+    //PARSING STARTBLOCK AS INT HERE...
+    await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', parseInt(startBlock));
+    await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
+    console.log('Uploaded raw data to bucket.');
+  }
+  catch(err) {
+    console.error(err);
+  }
 
   //Write last block crawled to txt file in tmp dir
-  // let latestBlock = await web3.eth.getBlockNumber().toString();
-  // await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
-  //     if (err) throw console.error(err);
-  // });
-  // console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt')
+  let latestBlock = await web3.eth.getBlockNumber().toString();
+  await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
+      if (err) throw console.error(err);
+  });
+  console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
 
-  // //Upload to bucket
-  // await bucket.upload(temp_dir + '/last_block.txt');
-  // console.log('Uploaded last_block.txt to bucket.')
-  // if (failedBlocks.length > 0){
-  //   console.log('FOLLOWING BLOCKS FAILED:')
-  //   console.log(failedBlocks);
-  // }
+  //Upload to bucket
+  await bucket.upload(temp_dir + '/last_block.txt');
+  console.log('Uploaded last_block.txt to bucket.');
+
+  //Log out failed blocks
+  if (failedBlocks.length > 0) {
+    console.log('FOLLOWING BLOCKS FAILED:');
+    console.log(failedBlocks);
+  }
 }
 
