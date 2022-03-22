@@ -78460,7 +78460,7 @@ Object.defineProperty(exports, "Storage", { enumerable: true, get: function () {
 
 }(src$c));
 
-require('fs');
+const fsLibrary = require('fs');
 const addresses = {
     USD_LEMMA: '0xdb41ab644AbcA7f5ac579A5Cf2F41e606C2d6abc',
     XUSD_Lemma: '0x57c7e0d43c05bce429ce030132ca40f6fa5839d7',
@@ -78538,12 +78538,13 @@ async function writeRawData() {
         return file.toString();
     };
     let startBlock = await downloadFile();
-    //LOCAL
+    //LOCAL:
     //let startBlock = 8054330
     try {
         console.log('Crawling starting at block ' + startBlock + '...');
-        //LOCAL
+        //LOCAL:
         //await writeToParquet('data/raw/USDLemma_raw_latest_TEST.parquet', startBlock);
+        //GCF:
         //await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', parseInt(startBlock));
         //await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
         console.log('Uploaded raw data to bucket.');
@@ -78552,21 +78553,18 @@ async function writeRawData() {
         console.error(err);
     }
     //Write last block crawled to txt file in tmp dir
-    await web3.eth.getBlockNumber().toString();
-    //OLD
-    // await fsLibrary.writeFile(temp_dir + '/last_block.txt', latestBlock, (err) => {
-    //     if (err) throw console.error(err);
-    // });
-    // const uploadFile = async () => {
-    //   await fsLibrary.writeFile(temp_dir + '/last_block.txt', latestBlock, (err) => {
-    //     if (err) throw console.error(err);
-    //   });
-    // }
-    // await uploadFile();
-    // console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
+    let latestBlock = await web3.eth.getBlockNumber().toString();
+    console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
+    const uploadFile = async () => {
+        await fsLibrary.writeFile(temp_dir + '/last_block_TEST.txt', latestBlock, (err) => {
+            if (err)
+                throw console.error(err);
+        });
+    };
+    await uploadFile();
     // //Upload to bucket
-    // await bucket.upload(temp_dir + '/last_block.txt');
-    // console.log('Uploaded last_block.txt to bucket.');
+    await bucket.upload(temp_dir + '/last_block_TEST.txt');
+    console.log('Uploaded last_block.txt to bucket.');
     //Log out failed blocks
     if (failedBlocks.length > 0) {
         console.log('FOLLOWING BLOCKS FAILED:');
