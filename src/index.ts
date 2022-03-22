@@ -34,7 +34,7 @@ export const writeToParquet = async (fileName: string, startBlock: any) => {
   console.log(latestBlock);
   var writer = await ParquetWriter.openFile(schema, fileName); //removed await
   //await pull_data(writer, startBlock, latestBlock)
-  await pull_data(writer, startBlock, 8054335);
+  await pull_data(writer, startBlock, 8054333);
   await writer.close();
 }
 
