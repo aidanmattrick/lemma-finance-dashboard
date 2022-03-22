@@ -78557,10 +78557,17 @@ async function writeRawData() {
     }
     //Write last block crawled to txt file in tmp dir
     let latestBlock = await web3.eth.getBlockNumber().toString();
-    await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
+    //OLD
+    await fsLibrary.writeFile(temp_dir + '/last_block.txt', latestBlock, (err) => {
         if (err)
             throw console.error(err);
     });
+    // const uploadFile = async () => {
+    //   await fsLibrary.writeFile(temp_dir + '/last_block.txt', latestBlock, (err) => {
+    //     if (err) throw console.error(err);
+    //   });
+    // }
+    //await uploadFile();
     console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
     //Upload to bucket
     await bucket.upload(temp_dir + '/last_block.txt');
