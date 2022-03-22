@@ -5,15 +5,15 @@ import { USDLemma } from "./contracts/USDLemma";
 import { stringify } from "querystring";
 import { Storage } from '@google-cloud/storage';
 import os from 'os';
-const fsLibrary  = require('fs');
+import fsLibrary from 'fs';
 
 const addresses = {
   USD_LEMMA: '0xdb41ab644AbcA7f5ac579A5Cf2F41e606C2d6abc', //Proxy address but using Implementation ABI 0xb8f9632e8d3cfaf84c254d98aea182a33a9d11bb
   XUSD_Lemma: '0x57c7e0d43c05bce429ce030132ca40f6fa5839d7',
 }
 
-const parquet = require('parquetjs');
-const Web3 = require('web3');
+import parquet from 'parquetjs';
+import Web3 from 'web3';
 const web3 = new Web3(new Web3.providers.HttpProvider('https://arb-mainnet.g.alchemy.com/v2/S6gNm0Rzgv7UBu3ztTC1iDbNX0vhoT9m'));
 let failedBlocks: string[] = [];
 
@@ -113,7 +113,7 @@ export async function writeRawData() {
   }
 
   //Write last block crawled to txt file in tmp dir
-  let latestBlock = await web3.eth.getBlockNumber().toString();
+  let latestBlock = (await web3.eth.getBlockNumber()).toString();
 
   console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
 
