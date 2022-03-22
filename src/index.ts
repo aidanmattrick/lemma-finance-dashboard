@@ -105,8 +105,8 @@ export async function writeRawData() {
     //LOCAL:
     //await writeToParquet('data/raw/USDLemma_raw_latest_TEST.parquet', startBlock);
     //GCF:
-    //await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', parseInt(startBlock));
-    //await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
+    await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', parseInt(startBlock));
+    await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
     console.log('Uploaded raw data to bucket.');
   }
   catch(err) {
