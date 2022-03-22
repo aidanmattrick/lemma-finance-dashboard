@@ -25,7 +25,9 @@ const config: RollupOptions = {
                 'readable-stream': 'stream',
             }
         }),
-        resolve(),
+        resolve({
+            exportConditions: ['node'],
+        }),
         commonjs({
             exclude: [
                 'electron',
