@@ -12,14 +12,15 @@ const addresses = {
   XUSD_Lemma: '0x57c7e0d43c05bce429ce030132ca40f6fa5839d7',
 }
 
-import parquet from 'parquetjs';
+//import parquet from 'parquetjs';
+import { ParquetSchema, ParquetWriter } from 'parquets';
 import Web3 from 'web3';
 const web3 = new Web3(new Web3.providers.HttpProvider('https://arb-mainnet.g.alchemy.com/v2/S6gNm0Rzgv7UBu3ztTC1iDbNX0vhoT9m'));
 let failedBlocks: string[] = [];
 
 
 // Parquet table
-let schema = new parquet.ParquetSchema({
+let schema = new ParquetSchema({
   event: { type: 'UTF8' },
   contract_address: { type: 'UTF8' },
   block_number: { type: 'UTF8'},
@@ -31,7 +32,7 @@ let schema = new parquet.ParquetSchema({
 export const writeToParquet = async (fileName: string, startBlock: any) => {
   const latestBlock = await web3.eth.getBlockNumber();
   console.log(latestBlock);
-  var writer = await parquet.ParquetWriter.openFile(schema, fileName); //removed await
+  var writer = await ParquetWriter.openFile(schema, fileName); //removed await
   //await pull_data(writer, startBlock, latestBlock)
   await pull_data(writer, startBlock, 8054335);
   await writer.close();
@@ -119,7 +120,7 @@ export async function writeRawData() {
 
   await fsLibrary.promises.writeFile(temp_dir + '/last_block_TEST.txt', latestBlock);
 
-  // //Upload to bucket
+  //Upload to bucket
   await bucket.upload(temp_dir + '/last_block_TEST.txt');
   console.log('Uploaded last_block.txt to bucket.');
 
