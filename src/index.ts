@@ -18,7 +18,6 @@ import Web3 from 'web3';
 const web3 = new Web3(new Web3.providers.HttpProvider('https://arb-mainnet.g.alchemy.com/v2/S6gNm0Rzgv7UBu3ztTC1iDbNX0vhoT9m'));
 let failedBlocks: string[] = [];
 
-
 // Parquet table
 let schema = new ParquetSchema({
   event: { type: 'UTF8' },
@@ -33,6 +32,8 @@ export const writeToParquet = async (fileName: string, startBlock: any) => {
   const latestBlock = await web3.eth.getBlockNumber();
   console.log(latestBlock);
   var writer = await ParquetWriter.openFile(schema, fileName); //removed await
+  //Append null row in case no events happened in block range
+  await writer.appendRow({event: 'Null', contract_address: 'Null', block_number: 'Null', tx_hash:'Null', return_values:'Null'});
   //await pull_data(writer, startBlock, latestBlock)
   await pull_data(writer, startBlock, 8054332);
   await writer.close();
