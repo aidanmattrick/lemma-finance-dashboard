@@ -117,12 +117,7 @@ export async function writeRawData() {
 
   console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
 
-  const uploadFile = async () => {
-  await fsLibrary.writeFile(temp_dir + '/last_block_TEST.txt', latestBlock, (err) => {
-    if (err) throw console.error(err);
-    });
-  }
-  await uploadFile();
+  await fsLibrary.promises.writeFile(temp_dir + '/last_block_TEST.txt', latestBlock);
 
   // //Upload to bucket
   await bucket.upload(temp_dir + '/last_block_TEST.txt');
