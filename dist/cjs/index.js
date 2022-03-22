@@ -78460,7 +78460,7 @@ Object.defineProperty(exports, "Storage", { enumerable: true, get: function () {
 
 }(src$c));
 
-const fsLibrary = require('fs');
+require('fs');
 const addresses = {
     USD_LEMMA: '0xdb41ab644AbcA7f5ac579A5Cf2F41e606C2d6abc',
     XUSD_Lemma: '0x57c7e0d43c05bce429ce030132ca40f6fa5839d7',
@@ -78539,79 +78539,43 @@ async function writeRawData() {
     //   var startBlock = parseInt(contents.toString())
     //   console.log(startBlock)
     // });
-    let startBlock = await remoteFile.download(async function (err, contents) {
-        console.log("file err: " + err);
-        console.log("file data: " + contents);
-        let startBlock = parseInt(contents.toString());
-        return startBlock;
-    });
-    try {
-        console.log('Crawling starting at block ' + startBlock + '...');
-        await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', startBlock);
-        await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
-        console.log('Uploaded raw data to bucket.');
+    async function getStartBlock() {
+        const contents = await remoteFile.download(); //.catch(error => console.error(error));
+        return contents.toString();
     }
-    catch (err) {
-        console.error(err);
-    }
+    let startBlock = getStartBlock(); //.catch(console.error);
+    // let startBlock = await remoteFile.download(async function(err, contents) {
+    //   console.log("file err: " + err);
+    //   console.log("file data: " + contents);
+    //   let startBlock = parseInt(contents.toString());
+    //   return startBlock;
+    // });
+    console.log(startBlock);
+    console.log('toString:');
+    console.log(startBlock.toString());
+    // try {
+    //   console.log('Crawling starting at block ' + startBlock + '...')
+    //   await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', startBlock);
+    //   await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
+    //   console.log('Uploaded raw data to bucket.');
+    // }
+    // catch(err) {
+    //   console.error(err)
+    // }
     //Write last block crawled to txt file in tmp dir
-    let latestBlock = await web3.eth.getBlockNumber().toString();
-    await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
-        if (err)
-            throw console.error(err);
-    });
-    console.log('Wrote last block crawled (' + latestBlock.toString() + ') to last_block.txt');
-    //Upload to bucket
-    await bucket.upload(temp_dir + '/last_block.txt');
-    console.log('Uploaded last_block.txt to bucket.');
+    // let latestBlock = await web3.eth.getBlockNumber().toString();
+    // await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
+    //     if (err) throw console.error(err);
+    // });
+    // console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt')
+    // //Upload to bucket
+    // await bucket.upload(temp_dir + '/last_block.txt');
+    // console.log('Uploaded last_block.txt to bucket.')
+    // if (failedBlocks.length > 0){
+    //   console.log('FOLLOWING BLOCKS FAILED:')
+    //   console.log(failedBlocks);
+    // }
 }
-//Below is code for diff async approach based on Stack Overflow post
-//Trying to get working with await awaiter approach...
-//https://stackoverflow.com/questions/66180561/proper-way-to-await-multiple-async-functions-with-google-cloud-functions-node-js
-//COPY of main function - messing around with async approaches
-// export const writeToParquet = async (fileName: string) => {
-//   //let awaiter = new Promise((resolve) => {
-//   const latestBlock = web3.eth.getBlockNumber()
-//   console.log(latestBlock);
-//   var writer = parquet.ParquetWriter.openFile(schema, fileName); //removed await
-//   //await pull_data(writer, 0, latestBlock); 8171109
-//   await pull_data(writer, 8054330, 8054335)
-//   writer.close();
-//   //resolve;
-//   //});
-//   //await awaiter;
-// }
-//COPY of GCF Main Function
-//const writeRawData = async () => {
-// exports.writeRawData = async () => {
-//   const storage = new Storage();
-//   const bucket = storage.bucket('lemma_dash_test');
-//   console.log('Current directory: ' + process.cwd());
-//   const temp_dir = os.tmpdir();
-//   console.log(temp_dir);
-//   let awaiter = new Promise<void>((resolve) => {
-//   try {
-//     //await writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
-//     writeToParquet(temp_dir + '/USDLemma_test_03-16-22.parquet');
-//     //LOCAL
-//     //writeToParquet('data/raw/USDLemma_test_03-16-22.parquet');
-//     console.log('wrote to Parquet in try.')
-//     bucket.upload(temp_dir + '/USDLemma_test_03-16-22.parquet', async function(err, file) {
-//     console.log('Made it through try statement to upload to bucket.')
-//     resolve();
-//     });
-//   }
-//   catch(err) {
-//     console.error(err)
-//   }
-//   });
-//   await awaiter;
-//   console.log("Uploaded file to bucket!");
-// }
-//WHEN RUNNING ON LOCAL UNCOMMENT:
-//writeToParquet('data/raw/USDLemma_03-19-22.parquet');
-console.log(failedBlocks); //show all failed blocks
-writeRawData();
 
 exports.writeRawData = writeRawData;
 exports.writeToParquet = writeToParquet;
