@@ -91,8 +91,13 @@ export async function writeRawData() {
   const temp_dir = os.tmpdir();
   console.log(temp_dir);
 
-  async function deleteFile() {
+  // async function deleteFile() {
+  //   await bucket.file('USDLemma_raw_latest.parquet').delete();
+  // }
+
+  const deleteFile = async () => {
     await bucket.file('USDLemma_raw_latest.parquet').delete();
+    console.log('Old USDLemma_raw_latest.parquet deleted.')
   }
 
   await deleteFile();
