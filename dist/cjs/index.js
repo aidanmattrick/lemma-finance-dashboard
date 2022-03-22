@@ -78460,7 +78460,7 @@ Object.defineProperty(exports, "Storage", { enumerable: true, get: function () {
 
 }(src$c));
 
-const fsLibrary = require('fs');
+require('fs');
 const addresses = {
     USD_LEMMA: '0xdb41ab644AbcA7f5ac579A5Cf2F41e606C2d6abc',
     XUSD_Lemma: '0x57c7e0d43c05bce429ce030132ca40f6fa5839d7',
@@ -78552,12 +78552,11 @@ async function writeRawData() {
         console.error(err);
     }
     //Write last block crawled to txt file in tmp dir
-    let latestBlock = await web3.eth.getBlockNumber().toString();
-    await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
-        if (err)
-            throw console.error(err);
-    });
-    console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
+    // let latestBlock = await web3.eth.getBlockNumber().toString();
+    // await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
+    //     if (err) throw console.error(err);
+    // });
+    // console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
     //Upload to bucket
     await bucket.upload(temp_dir + '/last_block.txt');
     console.log('Uploaded last_block.txt to bucket.');
@@ -78567,6 +78566,7 @@ async function writeRawData() {
         console.log(failedBlocks);
     }
 }
+//writeRawData();
 
 exports.writeRawData = writeRawData;
 exports.writeToParquet = writeToParquet;
