@@ -5,7 +5,8 @@ import { stringify } from "querystring";
 // import { XUSDLemma } from './contracts/xUSDLemma';  REVISIT once source code verified
 import { Storage } from '@google-cloud/storage';
 import os from 'os';
-import { kMaxLength } from 'buffer';
+//import { kMaxLength } from 'buffer';
+//import { resolve } from '@rollup/plugin-node-resolve';
 const fsLibrary  = require('fs');
 
 const addresses = {
@@ -94,26 +95,46 @@ export async function writeRawData() {
   //   console.log("file err: " + err);
   //   console.log("file data: " + contents);
   //   var startBlock = parseInt(contents.toString())
-  //   console.log(startBlock)
-  // });
-
-  async function getStartBlock() {
-    const contents = await remoteFile.download();//.catch(error => console.error(error));
-    return contents.toString();
-  };
-
-  let startBlock = getStartBlock()//.catch(console.error);
-
-  // let startBlock = await remoteFile.download(async function(err, contents) {
-  //   console.log("file err: " + err);
-  //   console.log("file data: " + contents);
-  //   let startBlock = parseInt(contents.toString());
   //   return startBlock;
   // });
 
-  console.log(startBlock);
-  console.log('toString:');
-  console.log(startBlock.toString())
+  // async function getStartBlock() {
+  //   const contents = await remoteFile.download();//.catch(error => console.error(error));
+  //   return contents.toString();
+  // };
+
+  // let startBlock = getStartBlock()//.catch(console.error);
+
+  // async function downloadFile() {
+  //   // Downloads the file
+  //   let downloaded_file = await remoteFile.download();
+  //   downloaded_file.then((resolve))
+  // }
+
+  // downloadFile().catch(console.error);
+
+  const downloadAFile = async () => {
+    const file = await remoteFile.download();
+    return file.toString();
+  }
+
+  let result = await downloadAFile();
+  console.log('Attempt')
+  console.log(result)
+
+
+  //One that was closest
+  // let startBlock = await remoteFile.download(async function(err, contents) {
+  //   console.log("file err: " + err);
+  //   console.log("file data: " + contents);
+  //   var startBlock = parseInt(contents.toString());
+  //   return startBlock;
+  // });
+
+  // console.log(startBlock.then((res) =>console.log(res)));
+  // console.log('toString:');
+  // console.log(startBlock.toString())
+
   // try {
   //   console.log('Crawling starting at block ' + startBlock + '...')
   //   await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', startBlock);
