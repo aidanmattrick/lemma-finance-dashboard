@@ -119,18 +119,18 @@ export async function writeRawData() {
   //     if (err) throw console.error(err);
   // });
 
-  const uploadFile = async () => {
-    await fsLibrary.writeFile(temp_dir + '/last_block.txt', latestBlock, (err) => {
-      if (err) throw console.error(err);
-    });
-  }
-  await uploadFile();
+  // const uploadFile = async () => {
+  //   await fsLibrary.writeFile(temp_dir + '/last_block.txt', latestBlock, (err) => {
+  //     if (err) throw console.error(err);
+  //   });
+  // }
+  // await uploadFile();
 
-  console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
+  // console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
 
-  //Upload to bucket
-  await bucket.upload(temp_dir + '/last_block.txt');
-  console.log('Uploaded last_block.txt to bucket.');
+  // //Upload to bucket
+  // await bucket.upload(temp_dir + '/last_block.txt');
+  // console.log('Uploaded last_block.txt to bucket.');
 
   //Log out failed blocks
   if (failedBlocks.length > 0) {
