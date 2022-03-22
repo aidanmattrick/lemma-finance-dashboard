@@ -136,5 +136,5 @@ export async function writeRawData() {
 
 //NEED TO HANDLE CASE IN WHICH PARQUET FILE IS 0 ROWS...
 
-writeRawData();
+//writeRawData();
 
