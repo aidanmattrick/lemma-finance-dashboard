@@ -43,7 +43,8 @@ export const writeToParquet = async (fileName: string, startBlock: any) => {
 async function pull_data(writer, startBlock = 0, latestBlock): Promise<void> {
   for (let i = startBlock; i <= latestBlock; i+= 2000) {
     let fromBlock = i
-    let toBlock = i + 1999
+    //let toBlock = i + 1999
+    let toBlock = i + 1
     if (fromBlock % 100000 === 0) {
       console.log("Progress is " + ((startBlock / latestBlock) * 100).toFixed(2).toString() + "% complete.");
     }
