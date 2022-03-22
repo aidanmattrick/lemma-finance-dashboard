@@ -78541,11 +78541,15 @@ async function writeRawData() {
     // console.log('Attempt')
     // console.log(result)
     let startBlock = await downloadFile();
+    //LOCAL
+    //let startBlock = 8054330
     try {
         console.log('Crawling starting at block ' + startBlock + '...');
+        //LOCAL
+        //await writeToParquet('data/raw/USDLemma_raw_latest_TEST.parquet', startBlock);
         //PARSING STARTBLOCK AS INT HERE...
-        await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', parseInt(startBlock));
-        await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
+        //await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', parseInt(startBlock));
+        //await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
         console.log('Uploaded raw data to bucket.');
     }
     catch (err) {
@@ -78558,7 +78562,7 @@ async function writeRawData() {
     // });
     // console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
     //Upload to bucket
-    await bucket.upload(temp_dir + '/last_block.txt');
+    //await bucket.upload(temp_dir + '/last_block.txt');
     console.log('Uploaded last_block.txt to bucket.');
     //Log out failed blocks
     if (failedBlocks.length > 0) {
@@ -78566,7 +78570,8 @@ async function writeRawData() {
         console.log(failedBlocks);
     }
 }
-//writeRawData();
+//NEED TO HANDLE CASE IN WHICH PARQUET FILE IS 0 ROWS...
+writeRawData();
 
 exports.writeRawData = writeRawData;
 exports.writeToParquet = writeToParquet;
