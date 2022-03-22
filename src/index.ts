@@ -114,7 +114,7 @@ export async function writeRawData() {
   }
 
   //Write last block crawled to txt file in tmp dir
-  let latestBlock = await web3.eth.getBlockNumber();
+  let latestBlock = await web3.eth.getBlockNumber().toString();
   await fsLibrary.writeFile(temp_dir + 'last_block.txt', latestBlock, (err) => {
       if (err) throw console.error(err);
   });
