@@ -1,5 +1,6 @@
 import pandas as pd
 from src.process_data import process_data
+import config
 
 
 def append_to_raw_main():
@@ -31,7 +32,7 @@ def test(event, context):
         print('New data being processed...')
         raw_df = append_to_raw_main()
         #raw_df = pd.read_parquet('gs://lemma_dash/USDLemma_raw_latest.parquet')
-        process_data(raw_df)
+        process_data(raw_df, config.covalent_api_key)
         print('Main loop finished executing.')
 
     # #REALTIME

@@ -8,8 +8,8 @@ import re
 import ast
 #Check this isn't hacky
 import sys
-sys.path.append("../") #this is to read in config from parent dir
-import config
+#sys.path.append("../") #this is to read in config from parent dir
+#import config
 import requests
 
 #Notes:
@@ -115,12 +115,13 @@ def process_event_dfs(df):
 
 
 #Will need to find a way to get timestamps based on block numbers...
-def get_block_timestamps(df):
+def get_block_timestamps(df, covalent_api_key):
     block_list = list(df['block_number'])
     timestamps = []
 
     for block in block_list:
-        url = f'https://api.covalenthq.com/v1/42161/block_v2/{block}/?key={config.covalent_api_key}'
+        #url = f'https://api.covalenthq.com/v1/42161/block_v2/{block}/?key={config.covalent_api_key}'
+        url = f'https://api.covalenthq.com/v1/42161/block_v2/{block}/?key={covalent_api_key}'
         headers = {"Content-Type": "application/json"}
         response = requests.request("GET", url, headers=headers)
         json_blob = json.loads(response.text)
@@ -144,11 +145,12 @@ def get_curr_eth_price():
     json_blob = json.loads(response.text)
     return json_blob['data']['items'][0]['quote_rate']
 
-def get_hist_eth_price(requests_df):
+def get_hist_eth_price(requests_df, covalent_api_key):
     date_list = list(requests_df['timestamp_day'])
     prices = []
     for date in date_list:
-        url = f'https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/1/USD/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/?quote-currency=USD&format=JSON&from={date}&to={date}&key={config.covalent_api_key}'
+        #url = f'https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/1/USD/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/?quote-currency=USD&format=JSON&from={date}&to={date}&key={config.covalent_api_key}'
+        url = f'https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/1/USD/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/?quote-currency=USD&format=JSON&from={date}&to={date}&key={covalent_api_key}'
         headers = {"Content-Type": "application/json"}
         response = requests.request("GET", url, headers=headers)
         json_blob = json.loads(response.text)
@@ -244,16 +246,16 @@ def get_rebalance_df(raw_rebalance_df):
 
 
 #Maybe put the load_df() in main.py or just change this to main.py
-def process_data(raw_df):
+def process_data(raw_df, covalent_api_key):
     #Load in raw DF
     df = load_df(raw_df)
     print('DF loaded.')
     #Get blocktimestamps from raw_df
-    requests_df = get_block_timestamps(df)
+    requests_df = get_block_timestamps(df, covalent_api_key)
     print('Timestamps retrieved.')
 
     #Add hist eth prices to requests_df
-    requests_df = get_hist_eth_price(requests_df)
+    requests_df = get_hist_eth_price(requests_df, covalent_api_key)
     print('Prices retrieved.')
 
 
