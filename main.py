@@ -1,7 +1,10 @@
 import pandas as pd
 
-def test(data, context):
-    df = pd.read_parquet('gs://lemma-test-dash/USALemma_raw_latest.parquet')
+#https://cloud.google.com/functions/docs/writing/background#cloud-storage-example
+def test(event, context):
+    print(event['name'])
+    print(context)
+    df = pd.read_parquet('gs://lemma_dash_test/USALemma_raw_latest.parquet')
     print(df.shape)
 
 
