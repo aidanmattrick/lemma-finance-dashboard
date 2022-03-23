@@ -6,6 +6,8 @@ def test(event, context):
     print(context)
     df = pd.read_parquet('gs://lemma_dash_test/USDLemma_raw_latest.parquet')
     print(df.shape)
+    df.to_parquet('gs://lemma_dash_test/TEST_PARQ.parquet')
+    print('executed.')
 
 # fs = gcsfs.GCSFileSystem(project='my-project')
 # with fs.open('bucket/path.csv') as f:
