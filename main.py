@@ -4,7 +4,10 @@ import pandas as pd
 def test(event, context):
     print(event)
     print(context)
-    df = pd.read_parquet('gs://lemma_dash_test/USALemma_raw_latest.parquet')
+    df = pd.read_parquet('gs://lemma_dash_test/USDLemma_raw_latest.parquet')
     print(df.shape)
 
+# fs = gcsfs.GCSFileSystem(project='my-project')
+# with fs.open('bucket/path.csv') as f:
+#     df = pd.read_csv(f)
 
