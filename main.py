@@ -1,7 +1,6 @@
 import pandas as pd
 from src.process_data import process_data
-import config
-
+from config import covalent_api_key as covalent_api_key
 
 def append_to_raw_main():
     #Stack raw_latest on raw_main
@@ -13,7 +12,7 @@ def append_to_raw_main():
                      .query("event != 'Null' & contract_address != 'Null' & block_number != 'Null'")
                     )
     raw_main_updated = pd.concat([raw_main_df, raw_latest_df])
-    #Change name see if it overwrites...
+    #It does overwrite...
     raw_main_updated.to_parquet('gs://lemma_dash/TEST_PARQ.parquet')
     return raw_main_updated
 
@@ -32,7 +31,7 @@ def test(event, context):
         print('New data being processed...')
         raw_df = append_to_raw_main()
         #raw_df = pd.read_parquet('gs://lemma_dash/USDLemma_raw_latest.parquet')
-        process_data(raw_df, config.covalent_api_key)
+        process_data(raw_df, covalent_api_key)
         print('Main loop finished executing.')
 
     # #REALTIME
