@@ -1,6 +1,6 @@
 import pandas as pd
 from src.process_data import process_data
-import config
+#import config
 #from config import covalent_api_key as covalent_api_key
 
 def append_to_raw_main():
@@ -21,7 +21,6 @@ def append_to_raw_main():
 #RENAME TO MAIN
 def test(event, context):
     print(event)
-    print(config.covalent_api_key)
     #FOR TESTING:
     print('USDLemma_raw_latest updated...')
     raw_latest_df = pd.read_parquet('gs://lemma_dash/USDLemma_raw_latest.parquet')
@@ -30,10 +29,11 @@ def test(event, context):
         print('Wrapping up function.')
         return
     else:
+        covalent_api_key = pd.read_csv('gs://lemma_dash_api_key/api_key.csv')['covalent_api_key'][0]
         print('New data being processed...')
         raw_df = append_to_raw_main()
         #raw_df = pd.read_parquet('gs://lemma_dash/USDLemma_raw_latest.parquet')
-        process_data(raw_df, config.covalent_api_key)
+        process_data(raw_df, covalent_api_key)
         print('Main loop finished executing.')
 
     # #REALTIME
