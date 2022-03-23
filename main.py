@@ -1,7 +1,7 @@
 import pandas as pd
 from src.process_data import process_data
 import config
-from config import covalent_api_key as covalent_api_key
+#from config import covalent_api_key as covalent_api_key
 
 def append_to_raw_main():
     #Stack raw_latest on raw_main
@@ -21,9 +21,9 @@ def append_to_raw_main():
 #RENAME TO MAIN
 def test(event, context):
     print(event)
+    print(config.covalent_api_key)
     #FOR TESTING:
     print('USDLemma_raw_latest updated...')
-    print(covalent_api_key)
     raw_latest_df = pd.read_parquet('gs://lemma_dash/USDLemma_raw_latest.parquet')
     if raw_latest_df.shape[0] < 2:
         print('No new data was uploaded to USDLemma_raw_latest.')
@@ -33,7 +33,7 @@ def test(event, context):
         print('New data being processed...')
         raw_df = append_to_raw_main()
         #raw_df = pd.read_parquet('gs://lemma_dash/USDLemma_raw_latest.parquet')
-        process_data(raw_df, covalent_api_key)
+        process_data(raw_df, config.covalent_api_key)
         print('Main loop finished executing.')
 
     # #REALTIME
