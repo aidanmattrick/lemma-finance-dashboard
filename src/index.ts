@@ -43,8 +43,7 @@ export const writeToParquet = async (fileName: string, startBlock: any) => {
 async function pull_data(writer, startBlock = 0, latestBlock): Promise<void> {
   for (let i = startBlock; i <= latestBlock; i+= 2000) {
     let fromBlock = i
-    //let toBlock = i + 1999
-    let toBlock = i + 1
+    let toBlock = i + 2000
     if (fromBlock % 100000 === 0) {
       console.log("Progress is " + ((startBlock / latestBlock) * 100).toFixed(2).toString() + "% complete.");
     }
@@ -86,7 +85,8 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
 
 export async function writeRawData() {
   const storage = new Storage();
-  const bucket = storage.bucket('lemma_dash_test');
+  //const bucket = storage.bucket('lemma_dash_test');
+  const bucket = storage.bucket('lemma_dash');
   const remoteFile = bucket.file('last_block.txt');
   console.log('Current directory: ' + process.cwd());
   const temp_dir = os.tmpdir();
@@ -143,8 +143,4 @@ export async function writeRawData() {
     console.log(failedBlocks);
   }
 }
-
-//NEED TO HANDLE CASE IN WHICH PARQUET FILE IS 0 ROWS...
-
-//writeRawData();
 
