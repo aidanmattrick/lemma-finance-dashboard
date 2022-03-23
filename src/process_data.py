@@ -1,16 +1,14 @@
 import json
 import pandas as pd
 import janitor
-import os
 import numpy as np
 import pandas_flavor as pf
 from pathlib import Path
-import warnings
 import re
 import ast
 #Check this isn't hacky
 import sys
-sys.path.append("../")
+sys.path.append("../") #this is to read in config from parent dir
 import config
 import requests
 
@@ -46,19 +44,20 @@ def process_payload(row):
     text = re.sub("\]", r"}", text)
     return ast.literal_eval(text) # turn into dict to make pipeline more robust to changing fx's/params
 
-def load_df():
+def load_df(raw_df):
     #All events from USDLemma contract
-    df = (pd
-            #FOR WHEN GCLOUD
-            #.read_parquet(f'{PROJECT_DIR}/raw/USDLemma.parquet')
-            .read_parquet(f'data/raw/USDLemma_03-19-22.parquet')
-            .assign(
-                    values = lambda df: df.return_values.str.replace('=',':')
-            )
-            .transform_column('values', process_payload)
-            .drop(columns=['return_values'])
-            .transform_columns(['block_number'], lambda x: x.astype(int), elementwise=False)
-            )
+    # df = (pd
+    #         #FOR WHEN GCLOUD
+    #         #.read_parquet(f'{PROJECT_DIR}/raw/USDLemma.parquet')
+    #         .read_parquet(f'data/raw/USDLemma_03-19-22.parquet')
+    df = (raw_df
+          .assign(
+            values = lambda df: df.return_values.str.replace('=',':')
+          )
+          .transform_column('values', process_payload)
+          .drop(columns=['return_values'])
+          .transform_columns(['block_number'], lambda x: x.astype(int), elementwise=False)
+          )
     return df
 
 def process_event_dfs(df):
@@ -245,9 +244,9 @@ def get_rebalance_df(raw_rebalance_df):
 
 
 #Maybe put the load_df() in main.py or just change this to main.py
-def process_data():
+def process_data(raw_df):
     #Load in raw DF
-    df = load_df()
+    df = load_df(raw_df)
     print('DF loaded.')
     #Get blocktimestamps from raw_df
     requests_df = get_block_timestamps(df)
@@ -268,11 +267,16 @@ def process_data():
     USDL_df = get_USDL_balance_df(deposit_df, withdraw_df)
     rebalance_df = get_rebalance_df(raw_rebalance_df)
 
-    USDL_df.to_parquet('data/results/USDL_df_03-19-22.parquet')
-    rebalance_df.to_parquet('data/results/rebalance_df_03-19-22.parquet')
+    #Local:
+    #USDL_df.to_parquet('data/results/USDL_df_03-19-22.parquet')
+    #rebalance_df.to_parquet('data/results/rebalance_df_03-19-22.parquet')
+
+    #Cloud:
+    USDL_df.to_parquet('gs://lemma_dash/USDL_df.parquet')
+    rebalance_df.to_parquet('gs://lemma_dash/rebalance_df.parquet')
     print("Parquet's saved.")
 
-process_data()
+#process_data()
 
 
 

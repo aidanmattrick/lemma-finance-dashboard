@@ -6,3 +6,8 @@ streamlit==1.7.0
 gcsfs >= 2022.1.0
 watchdog >= 1.0.0,<2.0.0
 functions-framework==3.0.0
+config==0.5.1
+janitor==0.1.1
+pandas_flavor==0.2.0
+pyjanitor==0.21.2
+requests==2.27.1
