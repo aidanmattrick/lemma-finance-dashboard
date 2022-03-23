@@ -1,5 +1,6 @@
 import pandas as pd
 from src.process_data import process_data
+import config
 from config import covalent_api_key as covalent_api_key
 
 def append_to_raw_main():
@@ -22,6 +23,7 @@ def test(event, context):
     print(event)
     #FOR TESTING:
     print('USDLemma_raw_latest updated...')
+    print(covalent_api_key)
     raw_latest_df = pd.read_parquet('gs://lemma_dash/USDLemma_raw_latest.parquet')
     if raw_latest_df.shape[0] < 2:
         print('No new data was uploaded to USDLemma_raw_latest.')
