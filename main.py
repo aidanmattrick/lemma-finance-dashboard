@@ -18,7 +18,6 @@ def append_to_raw_main():
     return raw_main_updated
 
 
-#RENAME TO MAIN
 def main_loop(event, context):
     #REALTIME:
     if event['name'] == 'USDLemma_raw_latest.parquet':
@@ -37,6 +36,7 @@ def main_loop(event, context):
             return
     else:
         print('Another event, not trigger happened')
+        return
 
     #FOR TESTING:
     # print('Starting testing loop...')
