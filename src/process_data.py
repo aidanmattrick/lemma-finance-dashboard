@@ -267,8 +267,8 @@ def process_data(raw_df, covalent_api_key):
 
     #Cloud:
     #CHANGE BACK
-    USDL_df.to_parquet('gs://lemma_dash/USDL_df_new.parquet')
-    rebalance_df.to_parquet('gs://lemma_dash/rebalance_df_new.parquet')
+    USDL_df.to_parquet('gs://lemma_dash_results/USDL_df.parquet')
+    rebalance_df.to_parquet('gs://lemma_dash_results/rebalance_df.parquet')
     print("Parquet's saved.")
 
 #Local:

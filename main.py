@@ -47,13 +47,13 @@ def test(event, context):
     #     print('Wrapping up function.')
     #     return
 
-    #else:
-    #covalent_api_key = pd.read_csv('gs://lemma_dash_api_key/api_key.csv')['covalent_api_key'][0]
-    #print('New data being processed...')
-    #raw_df = append_to_raw_main()
-    #print('Raw appended.')
-    #process_data(raw_df, covalent_api_key)
-    #print('Main loop finished executing.')
+    #Test loop
+    covalent_api_key = pd.read_csv('gs://lemma_dash_api_key/api_key.csv')['covalent_api_key'][0]
+    print('New data being processed...')
+    raw_df = append_to_raw_main()
+    print('Raw appended.')
+    process_data(raw_df, covalent_api_key)
+    print('Main loop finished executing.')
     return
 
 
