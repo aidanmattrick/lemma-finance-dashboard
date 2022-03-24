@@ -5,11 +5,17 @@ import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import plotly.express as px
+import gcsfs
 
-USDL_df = pd.read_parquet('data/results/viz_df_daily_03-10-22.parquet')
-rebalance_df = pd.read_parquet('data/results/viz_rebalance_df_daily_03-11-22.parquet')
-
+USDL_URL = 'gs://lemma_dash/USDL_df.parquet'
+REBALANCE_URL = 'gs://lemma_dash/rebalance_df.parquet'
 VIZ_WIDTH = 1000
+
+#USDL_df = pd.read_parquet('data/results/viz_df_daily_03-10-22.parquet')
+#rebalance_df = pd.read_parquet('data/results/viz_rebalance_df_daily_03-11-22.parquet')
+
+USDL_df = pd.read_parquet(USDL_URL)
+rebalance_df = pd.read_parquet(REBALANCE_URL)
 
 #***********************
 #TVL VIZ
