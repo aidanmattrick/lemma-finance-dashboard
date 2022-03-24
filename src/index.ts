@@ -31,21 +31,24 @@ let schema = new ParquetSchema({
 export const writeToParquet = async (fileName: string, startBlock: any) => {
   const latestBlock = await web3.eth.getBlockNumber();
   console.log(latestBlock);
-  var writer = await ParquetWriter.openFile(schema, fileName); //removed await
+  var writer = await ParquetWriter.openFile(schema, fileName);
+
+  //Cloud:
   //Append null row in case no events happened in block range
   await writer.appendRow({event: 'Null', contract_address: 'Null', block_number: 'Null', tx_hash:'Null', return_values:'Null'});
-  //await pull_data(writer, startBlock, latestBlock)
-  await pull_data(writer, startBlock, 8054332);
+
+  await pull_data(writer, startBlock, latestBlock)
+  //await pull_data(writer, startBlock, 8054332);
   await writer.close();
 }
 
 //main data function
-async function pull_data(writer, startBlock = 0, latestBlock): Promise<void> {
+async function pull_data(writer, startBlock, latestBlock): Promise<void> {
   for (let i = startBlock; i <= latestBlock; i+= 2000) {
-    let fromBlock = i
-    let toBlock = i + 2000
+    let fromBlock = i;
+    let toBlock = i + 2000;
     if (fromBlock % 100000 === 0) {
-      console.log("Progress is " + ((startBlock / latestBlock) * 100).toFixed(2).toString() + "% complete.");
+      console.log("Progress is " + ((i / latestBlock) * 100).toFixed(2).toString() + "% complete.");
     }
     try {
       await get_data_blocks(writer, fromBlock, toBlock);
@@ -85,6 +88,7 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
 
 export async function writeRawData() {
   const storage = new Storage();
+  //Cloud:
   //const bucket = storage.bucket('lemma_dash_test');
   const bucket = storage.bucket('lemma_dash');
   const remoteFile = bucket.file('last_block.txt');
@@ -92,17 +96,14 @@ export async function writeRawData() {
   const temp_dir = os.tmpdir();
   console.log(temp_dir);
 
-  // async function deleteFile() {
-  //   await bucket.file('USDLemma_raw_latest.parquet').delete();
-  // }
-
+  //Cloud:
   const deleteFile = async () => {
     await bucket.file('USDLemma_raw_latest.parquet').delete();
     console.log('Old USDLemma_raw_latest.parquet deleted.')
   }
-
   await deleteFile();
 
+  //Cloud:
   const downloadFile = async () => {
     const file = await remoteFile.download();
     return file.toString();
@@ -111,12 +112,13 @@ export async function writeRawData() {
   let startBlock = await downloadFile();
 
   //LOCAL:
-  //let startBlock = 8054330
+  //let startBlock = 8100000//8157867;//8054330
 
   try {
     console.log('Crawling starting at block ' + startBlock + '...');
     //LOCAL:
-    //await writeToParquet('data/raw/USDLemma_raw_latest_TEST.parquet', startBlock);
+    //await writeToParquet('data/raw/USDLemma_raw_main.parquet', startBlock);
+
     //GCF:
     await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', parseInt(startBlock));
     await bucket.upload(temp_dir + '/USDLemma_raw_latest.parquet');
@@ -131,10 +133,11 @@ export async function writeRawData() {
 
   console.log('Wrote last block crawled (' + latestBlock + ') to last_block.txt');
 
-  await fsLibrary.promises.writeFile(temp_dir + '/last_block_TEST.txt', latestBlock);
+  //Cloud
+  await fsLibrary.promises.writeFile(temp_dir + '/last_block.txt', latestBlock);
 
   //Upload to bucket
-  await bucket.upload(temp_dir + '/last_block_TEST.txt');
+  await bucket.upload(temp_dir + '/last_block.txt');
   console.log('Uploaded last_block.txt to bucket.');
 
   //Log out failed blocks
@@ -144,3 +147,5 @@ export async function writeRawData() {
   }
 }
 
+//Local:
+//writeRawData();
