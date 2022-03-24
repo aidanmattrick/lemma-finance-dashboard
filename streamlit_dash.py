@@ -7,8 +7,8 @@ import plotly.graph_objects as go
 import plotly.express as px
 import gcsfs
 
-USDL_URL = 'gs://lemma_dash/USDL_df.parquet'
-REBALANCE_URL = 'gs://lemma_dash/rebalance_df.parquet'
+USDL_URL = 'gs://lemma_dash_results/USDL_df.parquet'
+REBALANCE_URL = 'gs://lemma_dash_results/rebalance_df.parquet'
 VIZ_WIDTH = 1000
 
 #USDL_df = pd.read_parquet('data/results/viz_df_daily_03-10-22.parquet')
