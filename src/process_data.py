@@ -6,21 +6,18 @@ import pandas_flavor as pf
 from pathlib import Path
 import re
 import ast
+import requests
+
 #Check this isn't hacky
-import sys
+#Local
+#import sys
 #sys.path.append("../") #this is to read in config from parent dir
 #import config
-import requests
+
 
 #Notes:
 # - Run from root dir
-# - Need to handle case in which no deposit, withdraw, or rebalance events for certain timeframe
-# - Handle with current eth price
-# - Update requirements.txt... or create conda env for GCF
-# - Note TVL graph with Covalent API shows TVL never reached $1M, just short
-# -    - This is due to Covalent API Using daily avg ether price not prev. minutely per Dune
-#      - Import Dune when saving to DB?
-# TEST REBALANCE GRAPH STILL
+# - Case in which no new events for deposit, withdraw, rebalance will be stopped upstream (single row w/ nulls that will not trigger this script)
 
 PROJECT_DIR = '/tmp'
 DEPOSITOR_COLS_TO_FLOAT = ['amount', 'collateralRequired']
@@ -45,11 +42,6 @@ def process_payload(row):
     return ast.literal_eval(text) # turn into dict to make pipeline more robust to changing fx's/params
 
 def load_df(raw_df):
-    #All events from USDLemma contract
-    # df = (pd
-    #         #FOR WHEN GCLOUD
-    #         #.read_parquet(f'{PROJECT_DIR}/raw/USDLemma.parquet')
-    #         .read_parquet(f'data/raw/USDLemma_03-19-22.parquet')
     df = (raw_df
           .assign(
             values = lambda df: df.return_values.str.replace('=',':')
@@ -270,15 +262,18 @@ def process_data(raw_df, covalent_api_key):
     rebalance_df = get_rebalance_df(raw_rebalance_df)
 
     #Local:
-    #USDL_df.to_parquet('data/results/USDL_df_03-19-22.parquet')
-    #rebalance_df.to_parquet('data/results/rebalance_df_03-19-22.parquet')
+    #USDL_df.to_parquet('data/results/USDL_df_03-24-22.parquet')
+    #rebalance_df.to_parquet('data/results/rebalance_df_03-24-22.parquet')
 
     #Cloud:
-    USDL_df.to_parquet('gs://lemma_dash/USDL_df.parquet')
-    rebalance_df.to_parquet('gs://lemma_dash/rebalance_df.parquet')
+    #CHANGE BACK
+    USDL_df.to_parquet('gs://lemma_dash/USDL_df_new.parquet')
+    rebalance_df.to_parquet('gs://lemma_dash/rebalance_df_new.parquet')
     print("Parquet's saved.")
 
-#process_data()
+#Local:
+#raw_df = pd.read_parquet('data/raw/USDLemma_raw_main_in_bucket.parquet')
+#process_data(raw_df, config.covalent_api_key)
 
 
 
