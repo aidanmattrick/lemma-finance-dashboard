@@ -12,10 +12,9 @@ const addresses = {
   XUSD_Lemma: '0x57c7e0d43c05bce429ce030132ca40f6fa5839d7',
 }
 
-//import parquet from 'parquetjs';
 import { ParquetSchema, ParquetWriter } from 'parquets';
 import Web3 from 'web3';
-const web3 = new Web3(new Web3.providers.HttpProvider('https://arb-mainnet.g.alchemy.com/v2/S6gNm0Rzgv7UBu3ztTC1iDbNX0vhoT9m'));
+const web3 = new Web3(new Web3.providers.HttpProvider('https://arb-mainnet.g.alchemy.com/v2/{API_KEY}'));
 let failedBlocks: string[] = [];
 
 // Parquet table
@@ -38,7 +37,6 @@ export const writeToParquet = async (fileName: string, startBlock: any) => {
   await writer.appendRow({event: 'Null', contract_address: 'Null', block_number: 'Null', tx_hash:'Null', return_values:'Null'});
 
   await pull_data(writer, startBlock, latestBlock)
-  //await pull_data(writer, startBlock, 8054332);
   await writer.close();
 }
 
@@ -66,7 +64,7 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
   //const XUSDLemma = new web3.eth.Contract(xUSDLemmaABI as any, addresses.XUSD_Lemma) as unknown as XUSDLemma;
   const lemmaEvents = await USDLemma.getPastEvents('allEvents', {
       fromBlock: fromBlock,
-      toBlock: toBlock //refactor to make sure not pulling extra blocks//currently deduping w/ Pandas
+      toBlock: toBlock
   })
 
   try {
@@ -89,7 +87,6 @@ async function get_data_blocks(writer, fromBlock: number, toBlock: number,): Pro
 export async function writeRawData() {
   const storage = new Storage();
   //Cloud:
-  //const bucket = storage.bucket('lemma_dash_test');
   const bucket = storage.bucket('lemma_dash');
   const remoteFile = bucket.file('last_block.txt');
   console.log('Current directory: ' + process.cwd());
@@ -112,12 +109,12 @@ export async function writeRawData() {
   let startBlock = await downloadFile();
 
   //LOCAL:
-  //let startBlock = 8100000//8157867;//8054330
+  //let startBlock = 8273208//8100000//8157867;//8054330
 
   try {
     console.log('Crawling starting at block ' + startBlock + '...');
     //LOCAL:
-    //await writeToParquet('data/raw/USDLemma_raw_main.parquet', startBlock);
+    //await writeToParquet('data/raw/USDLemma_raw_main_03-25-22.parquet', startBlock);
 
     //GCF:
     await writeToParquet(temp_dir + '/USDLemma_raw_latest.parquet', parseInt(startBlock));
@@ -135,7 +132,6 @@ export async function writeRawData() {
 
   //Cloud
   await fsLibrary.promises.writeFile(temp_dir + '/last_block.txt', latestBlock);
-
   //Upload to bucket
   await bucket.upload(temp_dir + '/last_block.txt');
   console.log('Uploaded last_block.txt to bucket.');
