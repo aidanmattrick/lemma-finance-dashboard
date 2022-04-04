@@ -93,7 +93,7 @@ def process_event_dfs(df):
                 .transform_column('amount', lambda x: x.astype(float), elementwise=False)
                 .transform_column('dexIndex', lambda x: x.astype(int), elementwise=False)
                 .assign(
-                  amount_USD = lambda df: df['amount'] / (10**18), #based on max value of 979.9 of amount on Dec 9, 2021 seems to be USD not eth but confirm
+                  amount_USD = lambda df: df['amount'] / (10**18),
                 )
                 .drop(columns=['0', '1', '2'])
                )
@@ -110,14 +110,18 @@ def process_event_dfs(df):
 def get_block_timestamps(df, covalent_api_key):
     block_list = list(df['block_number'])
     timestamps = []
-
+    print(block_list[0])
+    print(covalent_api_key)
     for block in block_list:
+        try:
         #url = f'https://api.covalenthq.com/v1/42161/block_v2/{block}/?key={config.covalent_api_key}'
-        url = f'https://api.covalenthq.com/v1/42161/block_v2/{block}/?key={covalent_api_key}'
-        headers = {"Content-Type": "application/json"}
-        response = requests.request("GET", url, headers=headers)
-        json_blob = json.loads(response.text)
-        timestamps.append(json_blob['data']['items'][0]['signed_at'])
+            url = f'https://api.covalenthq.com/v1/42161/block_v2/{block}/?key={covalent_api_key}'
+            headers = {"Content-Type": "application/json"}
+            response = requests.request("GET", url, headers=headers)
+            json_blob = json.loads(response.text)
+            timestamps.append(json_blob['data']['items'][0]['signed_at'])
+        except:
+            print(block)
 
     requests_df = (pd
                    .DataFrame({'block_number': block_list, 'timestamp':timestamps})
@@ -262,8 +266,8 @@ def process_data(raw_df, covalent_api_key):
     rebalance_df = get_rebalance_df(raw_rebalance_df)
 
     #Local:
-    #USDL_df.to_parquet('data/results/USDL_df_03-24-22.parquet')
-    #rebalance_df.to_parquet('data/results/rebalance_df_03-24-22.parquet')
+    #USDL_df.to_parquet('data/results/USDL_df_04-04-22.parquet')
+    #rebalance_df.to_parquet('data/results/rebalance_df_04-04-22.parquet')
 
     #Cloud:
     USDL_df.to_parquet('gs://lemma_dash_results/USDL_df.parquet')
@@ -271,7 +275,7 @@ def process_data(raw_df, covalent_api_key):
     print("Parquet's saved.")
 
 #Local:
-#raw_df = pd.read_parquet('data/raw/USDLemma_raw_main_in_bucket.parquet')
+#raw_df = pd.read_parquet('data/raw/USDLemma_raw_main_04-04-22.parquet')
 #process_data(raw_df, config.covalent_api_key)
 
 
