@@ -8,11 +8,11 @@ import re
 import ast
 import requests
 
-#Check this isn't hacky
-#Local
-#import sys
-#sys.path.append("../") #this is to read in config from parent dir
-#import config
+# #Check this isn't hacky
+# #Local
+# import sys
+# sys.path.append("../") #this is to read in config from parent dir
+# import config
 
 
 #Notes:
@@ -150,13 +150,21 @@ def get_hist_eth_price(requests_df, covalent_api_key):
         headers = {"Content-Type": "application/json"}
         response = requests.request("GET", url, headers=headers)
         json_blob = json.loads(response.text)
+        if date == '2021-12-30':
+            print(url)
+            print(json_blob)
+        if date == '2022-01-10':
+            print(url)
+            print(json_blob)
+
         prices.append(json_blob['data'][0]['prices'][0]['price'])
 
     requests_df = (requests_df
                 .add_column('price', prices)
                 .drop(columns=['timestamp_day'])
                 )
-
+    print(date_list)
+    print(prices)
     return requests_df
 
 
@@ -261,21 +269,23 @@ def process_data(raw_df, covalent_api_key):
     deposit_df, withdraw_df, raw_rebalance_df = process_event_dfs(df)
     print("Event DF's created.")
 
-
     USDL_df = get_USDL_balance_df(deposit_df, withdraw_df)
     rebalance_df = get_rebalance_df(raw_rebalance_df)
 
     #Local:
-    #USDL_df.to_parquet('data/results/USDL_df_04-04-22.parquet')
-    #rebalance_df.to_parquet('data/results/rebalance_df_04-04-22.parquet')
+    #USDL_df.to_parquet('data/results/USDL_df_04-11-22.parquet')
+    #rebalance_df.to_parquet('data/results/rebalance_df_04-11-22.parquet')
 
     #Cloud:
+    #TEST if not capturing last event
+    deposit_df.to_parquet('gs://lemma_dash_results/deposit_df.parquet')
+
     USDL_df.to_parquet('gs://lemma_dash_results/USDL_df.parquet')
     rebalance_df.to_parquet('gs://lemma_dash_results/rebalance_df.parquet')
     print("Parquet's saved.")
 
 #Local:
-#raw_df = pd.read_parquet('data/raw/USDLemma_raw_main_04-04-22.parquet')
+#raw_df = pd.read_parquet('data/raw/USDLemma_raw_main_COMBO_04-11-22.parquet')
 #process_data(raw_df, config.covalent_api_key)
 
 
